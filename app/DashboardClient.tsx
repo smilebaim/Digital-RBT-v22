@@ -957,6 +957,7 @@ export default function DashboardClient() {
       'profil': 'dampak',
       'peta': 'peta-operasi',
       'pembangunan': 'pengungsi',
+      'danadesa': 'pengungsi',
       'indeks': 'bantuan'
     };
     if (requestedTab && validTabsMap[requestedTab]) {

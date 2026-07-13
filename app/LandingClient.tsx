@@ -45,12 +45,21 @@ const DRAWER_MENU = [
   },
   {
     label: 'Ekonomi',
-    sub: 'Program Program & Anggaran Pembangunan Anggaran Desa',
+    sub: 'Program & Anggaran Desa',
     href: '/dashboard?tab=pembangunan',
     icon: '💰',
     color: '#0369a1',
     bg: '#f0f9ff',
     border: '#bae6fd',
+  },
+  {
+    label: 'Dana Desa',
+    sub: 'Realisasi & Laporan Dana Desa',
+    href: '/dashboard?tab=danadesa',
+    icon: '💵',
+    color: '#16a34a',
+    bg: '#f0fdf4',
+    border: '#bbf7d0',
   },
   {
     label: 'Layanan',
