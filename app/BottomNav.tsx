@@ -54,6 +54,15 @@ const TABS = [
 
 const DRAWER_MENU = [
   {
+    label: 'Kelembagaan',
+    sub: 'Lembaga Kemasyarakatan & Adat',
+    href: '/dashboard?tab=kelembagaan',
+    icon: '🏛️',
+    color: '#ea580c',
+    bg: '#fff7ed',
+    border: '#fed7aa',
+  },
+  {
     label: 'Literasi',
     sub: 'Data Indeks Desa Membangun',
     href: '/dashboard?tab=indeks',
@@ -61,6 +70,15 @@ const DRAWER_MENU = [
     color: '#7c3aed',
     bg: '#f5f3ff',
     border: '#ddd6fe',
+  },
+  {
+    label: 'Layanan',
+    sub: 'Profil & Layanan Desa',
+    href: '/dashboard?tab=profil',
+    icon: '🛎️',
+    color: '#15803d',
+    bg: '#f0fdf4',
+    border: '#bbf7d0',
   },
   {
     label: 'Ekonomi',
@@ -77,15 +95,6 @@ const DRAWER_MENU = [
     href: '/dashboard?tab=danadesa',
     icon: '💵',
     color: '#16a34a',
-    bg: '#f0fdf4',
-    border: '#bbf7d0',
-  },
-  {
-    label: 'Layanan',
-    sub: 'Profil & Layanan Desa',
-    href: '/dashboard?tab=profil',
-    icon: '🛎️',
-    color: '#15803d',
     bg: '#f0fdf4',
     border: '#bbf7d0',
   },

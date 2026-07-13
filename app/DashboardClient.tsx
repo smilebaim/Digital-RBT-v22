@@ -831,7 +831,210 @@ const HTML_CONTENT = `
         </div>
       </div>
     </div>
-`;
+
+    <!-- TAB: Kelembagaan -->
+    <div id="content-kelembagaan" class="tab-content">
+      <!-- KPI Summary Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        <div class="kpi-card card-hover">
+          <div class="flex items-center gap-3">
+            <div class="bg-primary-100 p-3 rounded-xl border border-primary-200">
+              <i class="fas fa-sitemap text-primary-600 text-lg"></i>
+            </div>
+            <div>
+              <p class="text-[11px] text-gray-500 font-semibold mb-0.5">Jumlah Lembaga</p>
+              <p class="text-xl font-black text-gray-800">6 Lembaga</p>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card card-hover">
+          <div class="flex items-center gap-3">
+            <div class="bg-purple-100 p-3 rounded-xl border border-purple-200">
+              <i class="fas fa-users text-purple-600 text-lg"></i>
+            </div>
+            <div>
+              <p class="text-[11px] text-gray-500 font-semibold mb-0.5">Total Pengurus / Anggota</p>
+              <p class="text-xl font-black text-gray-800">85 Jiwa</p>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card card-hover">
+          <div class="flex items-center gap-3">
+            <div class="bg-blue-100 p-3 rounded-xl border border-blue-200">
+              <i class="fas fa-clipboard-check text-blue-600 text-lg"></i>
+            </div>
+            <div>
+              <p class="text-[11px] text-gray-500 font-semibold mb-0.5">Kegiatan Terlaksana</p>
+              <p class="text-xl font-black text-gray-800">38 Kegiatan</p>
+            </div>
+          </div>
+        </div>
+        <div class="kpi-card card-hover">
+          <div class="flex items-center gap-3">
+            <div class="bg-emerald-100 p-3 rounded-xl border border-emerald-200">
+              <i class="fas fa-check-circle text-emerald-600 text-lg"></i>
+            </div>
+            <div>
+              <p class="text-[11px] text-gray-500 font-semibold mb-0.5">Rata-rata Keaktifan</p>
+              <p class="text-xl font-black text-gray-800">100% Aktif</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout: Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 main-grid">
+        <!-- Left Column: Lembaga List (2/5 span) -->
+        <div class="lg:col-span-2 space-y-3 max-h-[600px] overflow-y-auto pr-1">
+          <div class="p-1">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+              Daftar Lembaga Kemasyarakatan
+            </h3>
+            
+            <!-- Lembaga Cards -->
+            <div class="space-y-3.5">
+              <!-- Pemerintah Desa -->
+              <div onclick="selectKelembagaan('pemerintah', this)" 
+                class="lembaga-card border border-primary-500 ring-2 ring-primary-100 bg-primary-50/20 p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-landmark text-primary-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">Pemerintah Desa</h4>
+                      <p class="text-[11px] text-gray-500">Lembaga Eksekutif Desa</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">12 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">8 Terlaksana</strong></span>
+                </div>
+              </div>
+
+              <!-- BPD -->
+              <div onclick="selectKelembagaan('bpd', this)" 
+                class="lembaga-card border border-gray-200 bg-white p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-balance-scale text-purple-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">BPD</h4>
+                      <p class="text-[11px] text-gray-500">Badan Permusyawaratan Desa</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">7 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">4 Terlaksana</strong></span>
+                </div>
+              </div>
+
+              <!-- LPM -->
+              <div onclick="selectKelembagaan('lpm', this)" 
+                class="lembaga-card border border-gray-200 bg-white p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-hands-helping text-blue-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">LPM</h4>
+                      <p class="text-[11px] text-gray-500">Lembaga Pemberdayaan Masyarakat</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">15 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">6 Terlaksana</strong></span>
+                </div>
+              </div>
+
+              <!-- PKK -->
+              <div onclick="selectKelembagaan('pkk', this)" 
+                class="lembaga-card border border-gray-200 bg-white p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-female text-pink-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">PKK Desa</h4>
+                      <p class="text-[11px] text-gray-500">Pemberdayaan Kesejahteraan Keluarga</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">25 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">12 Terlaksana</strong></span>
+                </div>
+              </div>
+
+              <!-- Karang Taruna -->
+              <div onclick="selectKelembagaan('karang_taruna', this)" 
+                class="lembaga-card border border-gray-200 bg-white p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-fire text-red-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">Karang Taruna</h4>
+                      <p class="text-[11px] text-gray-500">Wadah Kepemudaan Desa</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">18 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">5 Terlaksana</strong></span>
+                </div>
+              </div>
+
+              <!-- BUMDes -->
+              <div onclick="selectKelembagaan('bumdes', this)" 
+                class="lembaga-card border border-gray-200 bg-white p-4 rounded-xl cursor-pointer hover:shadow-md transition duration-200">
+                <div class="flex items-center justify-between gap-3 mb-2">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-lg shadow-sm border border-white">
+                      <i class="fas fa-store text-emerald-600"></i>
+                    </div>
+                    <div class="min-w-0">
+                      <h4 class="text-sm font-bold text-gray-800 truncate">BUMDes</h4>
+                      <p class="text-[11px] text-gray-500">Badan Usaha Milik Desa</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[9px] font-extrabold uppercase tracking-wider">Aktif</span>
+                </div>
+                <div class="flex items-center justify-between border-t border-gray-100/80 pt-2 text-xs text-gray-500 font-medium">
+                  <span>Anggota: <strong class="text-gray-700">8 Jiwa</strong></span>
+                  <span>Kegiatan: <strong class="text-gray-700">3 Terlaksana</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Detail Panel (3/5 span) -->
+        <div class="lg:col-span-3">
+          <div class="panel p-5 h-full min-h-[420px]" id="kelembagaan-detail">
+            <!-- Loading or Default Detail Content will be updated dynamically -->
+            <div class="flex flex-col items-center justify-center h-full text-center py-10">
+              <div class="spinner mb-4"></div>
+              <p class="text-sm font-medium text-gray-500">Memuat rincian lembaga...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 
 function isDashboardMainReady(src: string) {
   return (
@@ -936,6 +1139,7 @@ export default function DashboardClient() {
       'togglePolygonLayer', 'applyCluster6Filter', 'changePolygonLevel',
       'searchPolygon', 'onBantuanFilterChange', 'renderBantuanTable',
       'slideOrangHilang', 'toggleMobileMenu', 'switchTabMobile', 'toggleLayerControl',
+      'selectKelembagaan', 'renderKelembagaanTab',
     ];
     stubs.forEach(fn => {
       if (typeof (window as any)[fn] !== 'function') {
@@ -958,7 +1162,8 @@ export default function DashboardClient() {
       'peta': 'peta-operasi',
       'pembangunan': 'pengungsi',
       'danadesa': 'pengungsi',
-      'indeks': 'bantuan'
+      'indeks': 'bantuan',
+      'kelembagaan': 'kelembagaan'
     };
     if (requestedTab && validTabsMap[requestedTab]) {
       const internalTabId = validTabsMap[requestedTab];

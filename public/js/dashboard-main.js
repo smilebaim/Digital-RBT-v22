@@ -3,6 +3,27 @@
 // =====================================================
 window.popupPageState = window.popupPageState || {};
 
+// Safe DOM helpers to prevent "Cannot set properties of null" errors during React mount/unmount or hydration
+function setElText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function setElHtml(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+
+function setElValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.value = value;
+}
+
+function getElValue(id, defaultValue = '') {
+  const el = document.getElementById(id);
+  return el ? el.value : defaultValue;
+}
+
 function changePopupPage(popupId, delta) {
   if (!window.popupPageState[popupId]) {
     window.popupPageState[popupId] = 1;
@@ -234,7 +255,8 @@ const localCache = {
 // UTILITY FUNCTIONS
 // =====================================================
 function showLoading() {
-  document.getElementById('loadingOverlay').classList.remove('hidden');
+  const el = document.getElementById('loadingOverlay');
+  if (el) el.classList.remove('hidden');
 }
 
 function initLoadingList(items) {
@@ -268,7 +290,8 @@ function updateLoadingItem(index, status) {
 }
 
 function hideLoading() {
-  document.getElementById('loadingOverlay').classList.add('hidden');
+  const el = document.getElementById('loadingOverlay');
+  if (el) el.classList.add('hidden');
 }
 
 // Skeleton loading for KPI cards
@@ -331,10 +354,10 @@ function formatNumber(num) {
 
 function updateLastUpdate() {
   const now = new Date();
-  document.getElementById('lastUpdate').textContent = now.toLocaleTimeString(
+  setElText('lastUpdate', now.toLocaleTimeString(
     'id-ID',
     { hour: '2-digit', minute: '2-digit' }
-  );
+  ));
 }
 
 function formatRupiah(num) {
@@ -914,6 +937,12 @@ const TAB_DATA_SOURCES = {
         banlog: results.banlog,
       });
     }
+  },
+  kelembagaan: {
+    sources: [],
+    process: (results) => {
+      // Offline/local mock data only, no external fetches needed
+    }
   }
 };
 
@@ -1149,6 +1178,9 @@ async function switchTab(tabId) {
         case 'bantuan':
           renderBantuanTab();
           break;
+        case 'kelembagaan':
+          renderKelembagaanTab();
+          break;
       }
     }
 
@@ -1183,33 +1215,17 @@ function renderDampakTab() {
   const data = state.data.bencana;
 
   // Update KPIs
-  document.getElementById('kpi-korban').textContent = formatNumber(
-    data.total_jiwa
-  );
-  document.getElementById('kpi-pengungsi').textContent = formatNumber(
-    data.total_pengungsi
-  );
-  document.getElementById('kpi-titik').textContent = formatNumber(
-    data.total_titik_pengungsian || 0
-  );
-  document.getElementById('kpi-rumah').textContent = formatNumber(
-    data.total_rumah
-  );
-  document.getElementById('kpi-sawah').textContent = formatNumber(
-    data.total_sawah
-  );
-  document.getElementById('kpi-kabupaten').textContent = data.data?.length || 0;
+  setElText('kpi-korban', formatNumber(data.total_jiwa));
+  setElText('kpi-pengungsi', formatNumber(data.total_pengungsi));
+  setElText('kpi-titik', formatNumber(data.total_titik_pengungsian || 0));
+  setElText('kpi-rumah', formatNumber(data.total_rumah));
+  setElText('kpi-sawah', formatNumber(data.total_sawah));
+  setElText('kpi-kabupaten', data.data?.length || 0);
 
   // Update quick stats
-  document.getElementById('stat-fasum').textContent = formatNumber(
-    data.total_fasum
-  );
-  document.getElementById('stat-kebun').textContent = formatNumber(
-    data.total_kebun
-  );
-  document.getElementById('stat-tambak').textContent = formatNumber(
-    data.total_tambak
-  );
+  setElText('stat-fasum', formatNumber(data.total_fasum));
+  setElText('stat-kebun', formatNumber(data.total_kebun));
+  setElText('stat-tambak', formatNumber(data.total_tambak));
 
   // Render charts
   renderDampakCharts(data);
@@ -2705,9 +2721,9 @@ function addCluster6Markers(
 }
 
 function applyCluster6Filter() {
-  const sektor = document.getElementById('filterSektor').value;
-  const subSektor = document.getElementById('filterSubSektor').value;
-  const kabFilter = document.getElementById('filterKabupaten').value;
+  const sektor = getElValue('filterSektor');
+  const subSektor = getElValue('filterSubSektor');
+  const kabFilter = getElValue('filterKabupaten');
   addCluster6Markers(sektor, subSektor, kabFilter);
 }
 
@@ -3179,55 +3195,40 @@ function updateLayerStats() {
   const rsudCount = state.data.rsud?.total || 0;
   const fasyankesV2Count = state.data.fasyankesV2?.total || 0;
 
-  document.getElementById('stat-puskesmas').textContent = puskesmasCount;
-  document.getElementById('stat-rsud').textContent = rsudCount;
-  document.getElementById('stat-fasyankes').textContent = fasyankesV2Count;
+  setElText('stat-puskesmas', puskesmasCount);
+  setElText('stat-rsud', rsudCount);
+  setElText('stat-fasyankes', fasyankesV2Count);
 
   // Combined faskes total
   const faskesTotal = puskesmasCount + rsudCount + fasyankesV2Count;
-  const faskesTotalEl = document.getElementById('stat-faskes-total');
-  if (faskesTotalEl) {
-    faskesTotalEl.textContent = faskesTotal;
-  }
+  setElText('stat-faskes-total', faskesTotal);
 
   // Other stats
-  document.getElementById('stat-banlog').textContent =
-    state.data.banlog?.total_desa || 0;
-  document.getElementById('stat-cluster6').textContent =
-    state.data.cluster6?.length || 0;
-  document.getElementById('stat-posko').textContent =
-    state.data.posko?.length || 0;
+  setElText('stat-banlog', state.data.banlog?.total_desa || 0);
+  setElText('stat-cluster6', state.data.cluster6?.length || 0);
+  setElText('stat-posko', state.data.posko?.length || 0);
 
   // Tenda stats
-  const tendaStatEl = document.getElementById('stat-tenda');
-  if (tendaStatEl) {
-    tendaStatEl.textContent = state.data.tenda?.length || 0;
-  }
+  setElText('stat-tenda', state.data.tenda?.length || 0);
 
   // Fasilitas Publik stats
-  const faspublikStatEl = document.getElementById('stat-faspublik');
-  if (faspublikStatEl) {
-    faspublikStatEl.textContent = state.data.fasilitasPublik?.length || 0;
-  }
+  setElText('stat-faspublik', state.data.fasilitasPublik?.length || 0);
 
   // Village Distribution stats
-  const villageStatEl = document.getElementById('stat-village');
-  if (villageStatEl) {
-    villageStatEl.textContent = state.data.villageDistribution?.length || 0;
-  }
+  setElText('stat-village', state.data.villageDistribution?.length || 0);
 
   // Jaringan count
   const jaringanCount = state.data.jaringan?.summary?.total || state.data.jaringan?.data?.length || 0;
-  document.getElementById('stat-jaringan').textContent = jaringanCount;
+  setElText('stat-jaringan', jaringanCount);
 }
 
 function updateJaringanStatus() {
   const summary = state.data.jaringan?.summary;
   if (!summary) return;
 
-  document.getElementById('jaringan-critical').textContent = summary.critical || 0;
-  document.getElementById('jaringan-warning').textContent = summary.warning || 0;
-  document.getElementById('jaringan-normal').textContent = summary.normal || 0;
+  setElText('jaringan-critical', summary.critical || 0);
+  setElText('jaringan-warning', summary.warning || 0);
+  setElText('jaringan-normal', summary.normal || 0);
 }
 
 function populateFilterKabupaten() {
@@ -3327,17 +3328,17 @@ function populateGlobalFilterKabupaten() {
 }
 
 function applyGlobalFilter() {
-  const kabupaten = document.getElementById('globalFilterKabupaten').value;
+  const kabupaten = getElValue('globalFilterKabupaten');
   state.globalFilter.kabupaten = kabupaten;
 
   // Update info display
   const info = document.getElementById('globalFilterInfo');
   const name = document.getElementById('filterKabName');
   if (kabupaten) {
-    info.classList.remove('hidden');
-    name.textContent = kabupaten;
+    if (info) info.classList.remove('hidden');
+    if (name) name.textContent = kabupaten;
   } else {
-    info.classList.add('hidden');
+    if (info) info.classList.add('hidden');
   }
 
   // Sync with existing tab-specific filters
@@ -3353,7 +3354,7 @@ function applyGlobalFilter() {
 }
 
 function resetGlobalFilter() {
-  document.getElementById('globalFilterKabupaten').value = '';
+  setElValue('globalFilterKabupaten', '');
   applyGlobalFilter();
 }
 
@@ -3400,6 +3401,9 @@ function renderCurrentTabWithFilter() {
     case 'bantuan':
       renderBantuanTable();
       break;
+    case 'kelembagaan':
+      renderKelembagaanTab();
+      break;
   }
 }
 
@@ -3440,25 +3444,17 @@ function renderDampakTabFiltered() {
   });
 
   // Update KPIs with filtered values
-  document.getElementById('kpi-korban').textContent = formatNumber(totals.jiwa);
-  document.getElementById('kpi-pengungsi').textContent = formatNumber(
-    totals.pengungsi
-  );
-  document.getElementById('kpi-titik').textContent = formatNumber(totals.titik);
-  document.getElementById('kpi-rumah').textContent = formatNumber(totals.rumah);
-  document.getElementById('kpi-sawah').textContent = formatNumber(totals.sawah);
-  document.getElementById('kpi-kabupaten').textContent = filteredData.length;
+  setElText('kpi-korban', formatNumber(totals.jiwa));
+  setElText('kpi-pengungsi', formatNumber(totals.pengungsi));
+  setElText('kpi-titik', formatNumber(totals.titik));
+  setElText('kpi-rumah', formatNumber(totals.rumah));
+  setElText('kpi-sawah', formatNumber(totals.sawah));
+  setElText('kpi-kabupaten', filteredData.length);
 
   // Update quick stats
-  document.getElementById('stat-fasum').textContent = formatNumber(
-    totals.fasum
-  );
-  document.getElementById('stat-kebun').textContent = formatNumber(
-    totals.kebun
-  );
-  document.getElementById('stat-tambak').textContent = formatNumber(
-    totals.tambak
-  );
+  setElText('stat-fasum', formatNumber(totals.fasum));
+  setElText('stat-kebun', formatNumber(totals.kebun));
+  setElText('stat-tambak', formatNumber(totals.tambak));
 
   // Re-render charts with filtered data
   renderDampakChartsFiltered(filteredData);
@@ -3603,13 +3599,10 @@ function renderPengungsiTabFiltered() {
     );
   }
 
-  document.getElementById('kpi-penduduk').textContent =
-    formatNumber(totalPenduduk);
-  document.getElementById('kpi-kk').textContent = formatNumber(totalKK);
-  document.getElementById('kpi-disabilitas').textContent =
-    formatNumber(totalDisabilitas);
-  document.getElementById('kpi-pengungsi-tab').textContent =
-    formatNumber(totalPengungsi);
+  setElText('kpi-penduduk', formatNumber(totalPenduduk));
+  setElText('kpi-kk', formatNumber(totalKK));
+  setElText('kpi-disabilitas', formatNumber(totalDisabilitas));
+  setElText('kpi-pengungsi-tab', formatNumber(totalPengungsi));
 
   // Re-render charts with filtered data
   renderPengungsiChartsFiltered(pendudukDisabilitasFiltered);
@@ -4007,9 +4000,9 @@ function renderOrangHilangSlider() {
   const summary = state.data.orangHilangSummary || {};
 
   // Update summary stats
-  document.getElementById('orangHilang-total').textContent = formatNumber(data.length);
-  document.getElementById('orangHilang-ongoing').textContent = formatNumber(summary.ongoing || 0);
-  document.getElementById('orangHilang-found').textContent = formatNumber(summary.found || 0);
+  setElText('orangHilang-total', formatNumber(data.length));
+  setElText('orangHilang-ongoing', formatNumber(summary.ongoing || 0));
+  setElText('orangHilang-found', formatNumber(summary.found || 0));
 
   const cardsContainer = document.getElementById('orangHilang-cards');
   const dotsContainer = document.getElementById('orangHilang-dots');
@@ -4176,13 +4169,10 @@ function updatePengungsiKPIs() {
     );
   }
 
-  document.getElementById('kpi-penduduk').textContent =
-    formatNumber(totalPenduduk);
-  document.getElementById('kpi-kk').textContent = formatNumber(totalKK);
-  document.getElementById('kpi-disabilitas').textContent =
-    formatNumber(totalDisabilitas);
-  document.getElementById('kpi-pengungsi-tab').textContent =
-    formatNumber(totalPengungsi);
+  setElText('kpi-penduduk', formatNumber(totalPenduduk));
+  setElText('kpi-kk', formatNumber(totalKK));
+  setElText('kpi-disabilitas', formatNumber(totalDisabilitas));
+  setElText('kpi-pengungsi-tab', formatNumber(totalPengungsi));
 }
 
 function renderPengungsiCharts() {
@@ -4418,21 +4408,11 @@ function updateBantuanKPIs() {
   const data = state.data.banlog;
   if (!data) return;
 
-  document.getElementById('kpi-desa').textContent = formatNumber(
-    data.total_desa
-  );
-  document.getElementById('kpi-kuning').textContent = formatNumber(
-    data.total_kuning
-  );
-  document.getElementById('kpi-biru').textContent = formatNumber(
-    data.total_biru
-  );
-  document.getElementById('kpi-abu').textContent = formatNumber(
-    data.total_biru_keabuan
-  );
-  document.getElementById('kpi-putih').textContent = formatNumber(
-    data.total_putih
-  );
+  setElText('kpi-desa', formatNumber(data.total_desa));
+  setElText('kpi-kuning', formatNumber(data.total_kuning));
+  setElText('kpi-biru', formatNumber(data.total_biru));
+  setElText('kpi-abu', formatNumber(data.total_biru_keabuan));
+  setElText('kpi-putih', formatNumber(data.total_putih));
 }
 
 function renderBantuanCharts() {
@@ -5983,6 +5963,255 @@ function toggleLayerControl() {
   }
 }
 
+// =====================================================
+// TAB: KELEMBAGAAN DUMMY DATA & INTERACTIVE LOGIC
+// =====================================================
+const KELEMBAGAAN_DATA = {
+  pemerintah: {
+    name: 'Pemerintah Desa',
+    members: 12,
+    kegiatan: 8,
+    status: 'Aktif',
+    leader: 'Haji Ramli, S.Sos.',
+    leaderTitle: 'Kepala Desa',
+    icon: 'fa-landmark text-primary-600',
+    bgIcon: 'bg-primary-100',
+    desc: 'Lembaga eksekutif penyelenggara pemerintahan desa, pengelolaan pembangunan, pembinaan kemasyarakatan, dan pemberdayaan masyarakat.',
+    struktur: [
+      { nama: 'Haji Ramli, S.Sos.', jabatan: 'Kepala Desa', foto: '👨‍💼' },
+      { nama: 'Zulkifli, S.E.', jabatan: 'Sekretaris Desa', foto: '👨‍💻' },
+      { nama: 'Nurhasanah, A.Md.', jabatan: 'Kaur Keuangan / Bendahara', foto: '👩‍💻' },
+      { nama: 'Syarifuddin', jabatan: 'Kasi Pemerintahan', foto: '👨‍💼' },
+      { nama: 'Andi Wijaya', jabatan: 'Kasi Kesejahteraan', foto: '👨‍💼' },
+    ],
+    agenda: [
+      { tgl: '15 Juli 2026', hal: 'Rapat Koordinasi Bulanan & Evaluasi Kinerja Perangkat Desa' },
+      { tgl: '20 Juli 2026', hal: 'Penyusunan Rencana Kerja Pemerintah Desa (RKPDes) Tahun 2027' },
+    ]
+  },
+  bpd: {
+    name: 'Badan Permusyawaratan Desa (BPD)',
+    members: 7,
+    kegiatan: 4,
+    status: 'Aktif',
+    leader: 'H. Mansyur',
+    leaderTitle: 'Ketua BPD',
+    icon: 'fa-balance-scale text-purple-600',
+    bgIcon: 'bg-purple-100',
+    desc: 'Lembaga yang melaksanakan fungsi pemerintahan yang anggotanya merupakan wakil dari penduduk desa berdasarkan keterwakilan wilayah dan ditetapkan secara demokratis.',
+    struktur: [
+      { nama: 'H. Mansyur', jabatan: 'Ketua BPD', foto: '👨‍⚖️' },
+      { nama: 'Drs. Ibrahim', jabatan: 'Wakil Ketua', foto: '👨‍⚖️' },
+      { nama: 'Kartini, S.Pd.', jabatan: 'Sekretaris BPD', foto: '👩‍⚖️' },
+      { nama: 'Rudi Hartono', jabatan: 'Anggota Keterwakilan Dusun I', foto: '👨‍💼' },
+      { nama: 'M. Yusuf', jabatan: 'Anggota Keterwakilan Dusun II', foto: '👨‍💼' },
+    ],
+    agenda: [
+      { tgl: '18 Juli 2026', hal: 'Musyawarah Desa (Musdes) Pembahasan RKPDes Bersama Pemerintah Desa' },
+      { tgl: '25 Juli 2026', hal: 'Penyerapan Aspirasi Masyarakat Dusun III' },
+    ]
+  },
+  lpm: {
+    name: 'Lembaga Pemberdayaan Masyarakat (LPM)',
+    members: 15,
+    kegiatan: 6,
+    status: 'Aktif',
+    leader: 'Budi Santoso',
+    leaderTitle: 'Ketua LPM',
+    icon: 'fa-hands-helping text-blue-600',
+    bgIcon: 'bg-blue-100',
+    desc: 'Lembaga kemasyarakatan yang dibentuk atas prakarsa masyarakat sebagai mitra pemerintah desa dalam menampung dan menyalurkan aspirasi masyarakat dalam pembangunan.',
+    struktur: [
+      { nama: 'Budi Santoso', jabatan: 'Ketua LPM', foto: '👨‍🌾' },
+      { nama: 'Slamet Riyadi', jabatan: 'Sekretaris', foto: '👨‍💼' },
+      { nama: 'Siti Rahma', jabatan: 'Bendahara', foto: '👩‍💼' },
+      { nama: 'Heri Prasetyo', jabatan: 'Seksi Pembangunan Fisik', foto: '👨‍🔧' },
+    ],
+    agenda: [
+      { tgl: '10 Juli 2026', hal: 'Gotong Royong Perbaikan Jembatan Desa & Pembersihan Saluran Air' },
+      { tgl: '02 Agustus 2026', hal: 'Sosialisasi Program Swadaya Masyarakat Dusun IV' },
+    ]
+  },
+  pkk: {
+    name: 'PKK Desa',
+    members: 25,
+    kegiatan: 12,
+    status: 'Aktif',
+    leader: 'Hj. Aminah Ramli',
+    leaderTitle: 'Ketua TP-PKK',
+    icon: 'fa-female text-pink-600',
+    bgIcon: 'bg-pink-100',
+    desc: 'Lembaga gerakan kemasyarakatan yang tumbuh dari bawah, dikelola oleh, dari, dan untuk masyarakat guna mewujudkan keluarga sejahtera melalui 10 program pokok PKK.',
+    struktur: [
+      { nama: 'Hj. Aminah Ramli', jabatan: 'Ketua TP-PKK', foto: '👩‍💼' },
+      { nama: 'Sri Wahyuni, S.Pd.', jabatan: 'Sekretaris', foto: '👩-[1]💻' },
+      { nama: 'Megawati', jabatan: 'Bendahara', foto: '👩-[1]💻' },
+      { nama: 'Fatimah', jabatan: 'Ketua Pokja I (Keagamaan & Gotong Royong)', foto: '👩‍⚕️' },
+      { nama: 'Dewi Lestari', jabatan: 'Ketua Pokja II (Pendidikan & Keterampilan)', foto: '👩‍🏫' },
+    ],
+    agenda: [
+      { tgl: '17 Juli 2026', hal: 'Kegiatan Posyandu Balita & Lansia Terpadu Dusun I-V' },
+      { tgl: '22 Juli 2026', hal: 'Pelatihan Kader PKK tentang Pemberdayaan Ekonomi Kreatif Rumah Tangga' },
+    ]
+  },
+  karang_taruna: {
+    name: 'Karang Taruna "Muda Mandiri"',
+    members: 18,
+    kegiatan: 5,
+    status: 'Aktif',
+    leader: 'Rian Hidayat',
+    leaderTitle: 'Ketua Karang Taruna',
+    icon: 'fa-fire text-red-600',
+    bgIcon: 'bg-red-100',
+    desc: 'Wadah pengembangan generasi muda desa yang tumbuh dan berkembang atas dasar kesadaran dan tanggung jawab sosial untuk memajukan olahraga, seni, dan kepemudaan.',
+    struktur: [
+      { nama: 'Rian Hidayat', jabatan: 'Ketua Karang Taruna', foto: '👨‍🎤' },
+      { nama: 'Doni Saputra', jabatan: 'Sekretaris', foto: '👨‍💻' },
+      { nama: 'Siska Amelia', jabatan: 'Bendahara', foto: '👩-[1]💻' },
+      { nama: 'Reza Fahlevi', jabatan: 'Koordinator Bidang Olahraga', foto: '⚽' },
+    ],
+    agenda: [
+      { tgl: '14 Juli 2026', hal: 'Persiapan Kompetisi Olahraga Antar Dusun Menyambut HUT RI' },
+      { tgl: '05 Agustus 2026', hal: 'Aksi Bersih Pantai & Penanaman Pohon Bakau di Pesisir Desa' },
+    ]
+  },
+  bumdes: {
+    name: 'BUMDes "Bako Makmur"',
+    members: 8,
+    kegiatan: 3,
+    status: 'Aktif',
+    leader: 'Ir. Ahmad Fauzi',
+    leaderTitle: 'Direktur BUMDes',
+    icon: 'fa-store text-emerald-600',
+    bgIcon: 'bg-emerald-100',
+    desc: 'Badan usaha yang seluruh atau sebagian besar modalnya dimiliki oleh Desa yang didirikan untuk meningkatkan pendapatan asli desa (PADes) melalui usaha ekonomi kreatif.',
+    struktur: [
+      { nama: 'Ir. Ahmad Fauzi', jabatan: 'Direktur BUMDes', foto: '👨‍💼' },
+      { nama: 'Hendrawan, S.E.', jabatan: 'Manajer Operasional', foto: '👨‍💻' },
+      { nama: 'Rina Karlina', jabatan: 'Bendahara / Kasir', foto: '👩-[1]💻' },
+      { nama: 'Supriyanto', jabatan: 'Kepala Unit Usaha Pertanian & Air Bersih', foto: '👨‍🔧' },
+    ],
+    agenda: [
+      { tgl: '12 Juli 2026', hal: 'Rapat Laporan Keuangan Semester I & Pembagian Sisa Hasil Usaha (SHU)' },
+      { tgl: '08 Agustus 2026', hal: 'Ekspansi Unit Usaha Baru: Pengelolaan Wisata Hutan Mangrove Desa' },
+    ]
+  }
+};
+
+function selectKelembagaan(id, cardEl) {
+  // Update card styles to show active selection
+  document.querySelectorAll('.lembaga-card').forEach(card => {
+    card.classList.remove('border-primary-500', 'ring-2', 'ring-primary-100', 'bg-primary-50/20');
+    card.classList.add('border-gray-200');
+  });
+  if (cardEl) {
+    cardEl.classList.remove('border-gray-200');
+    cardEl.classList.add('border-primary-500', 'ring-2', 'ring-primary-100', 'bg-primary-50/20');
+  } else {
+    // If cardEl not specified, try to find the matching card by onclick content to add styles
+    const cards = document.querySelectorAll('.lembaga-card');
+    cards.forEach(card => {
+      if (card.getAttribute('onclick')?.includes(`'${id}'`)) {
+        card.classList.remove('border-gray-200');
+        card.classList.add('border-primary-500', 'ring-2', 'ring-primary-100', 'bg-primary-50/20');
+      }
+    });
+  }
+
+  const data = KELEMBAGAAN_DATA[id];
+  if (!data) return;
+
+  // Render detail panel
+  const detailContainer = document.getElementById('kelembagaan-detail');
+  if (!detailContainer) return;
+
+  let strukturHtml = '';
+  data.struktur.forEach(m => {
+    strukturHtml += `
+      <div class="flex items-center gap-3 p-2.5 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
+        <div class="w-9 h-9 rounded-full bg-gray-100 border flex items-center justify-center text-lg shadow-sm">
+          ${m.foto}
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-semibold text-gray-800 truncate">${m.nama}</p>
+          <p class="text-xs text-gray-500 font-medium">${m.jabatan}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  let agendaHtml = '';
+  if (data.agenda && data.agenda.length > 0) {
+    data.agenda.forEach(a => {
+      agendaHtml += `
+        <div class="p-3 bg-gradient-to-r from-gray-50 to-white border-l-4 border-primary-500 rounded-r-lg border border-gray-200 shadow-sm">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-[10px] px-2 py-0.5 bg-primary-100 text-primary-700 font-extrabold rounded-full uppercase tracking-wider">${a.tgl}</span>
+          </div>
+          <p class="text-xs font-semibold text-gray-700 leading-relaxed">${a.hal}</p>
+        </div>
+      `;
+    });
+  } else {
+    agendaHtml = `<p class="text-xs text-gray-400 italic">Belum ada agenda terdekat.</p>`;
+  }
+
+  detailContainer.innerHTML = `
+    <div class="flex flex-col h-full animate-fade-in">
+      <div class="flex items-center gap-4 border-b border-gray-100 pb-4 mb-4">
+        <div class="p-3.5 rounded-xl ${data.bgIcon} flex items-center justify-center text-2xl shadow-sm border border-white">
+          <i class="fas ${data.icon}"></i>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-2 mb-0.5">
+            <h4 class="text-lg font-bold text-gray-800 leading-tight">${data.name}</h4>
+            <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-extrabold uppercase tracking-wide flex-shrink-0">${data.status}</span>
+          </div>
+          <p class="text-xs text-gray-500 font-semibold">${data.leaderTitle}: ${data.leader}</p>
+        </div>
+      </div>
+
+      <p class="text-xs text-gray-600 leading-relaxed mb-4 p-3 bg-gray-50 rounded-xl border border-gray-100 italic">
+        "${data.desc}"
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+        <!-- Struktur Pengurus -->
+        <div class="flex flex-col min-h-0">
+          <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <i class="fas fa-sitemap text-primary-500"></i>Struktur Inti / Pengurus
+          </h5>
+          <div class="space-y-2 overflow-y-auto pr-1 flex-1 max-h-[340px] md:max-h-[380px]">
+            ${strukturHtml}
+          </div>
+        </div>
+
+        <!-- Agenda & Kegiatan -->
+        <div class="flex flex-col min-h-0">
+          <h5 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+            <i class="fas fa-calendar-alt text-primary-500"></i>Agenda & Kegiatan Terdekat
+          </h5>
+          <div class="space-y-3 overflow-y-auto pr-1 flex-1 max-h-[340px] md:max-h-[380px]">
+            ${agendaHtml}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderKelembagaanTab() {
+  // Select first institution by default
+  setTimeout(() => {
+    const defaultCard = document.querySelector('.lembaga-card');
+    if (defaultCard) {
+      defaultCard.click();
+    } else {
+      selectKelembagaan('pemerintah');
+    }
+  }, 50);
+}
+
 function syncLastUpdateMobile() {
   const desktop = document.getElementById('lastUpdate');
   const mobile = document.getElementById('lastUpdateMobile');
@@ -6013,6 +6242,8 @@ Object.assign(window, {
   toggleMobileMenu,
   switchTabMobile,
   toggleLayerControl,
+  selectKelembagaan,
+  renderKelembagaanTab,
 });
 window.__dashboardMainReady = true;
 
